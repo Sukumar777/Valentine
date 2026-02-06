@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Valentine 💘</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+
+<body>
+  <!-- Center window -->
+  <main class="window" id="window">
+    <h1 class="title">Will you be my Valentine? 💘</h1>
+    <p class="subtitle">Choose wisely… Try to hit "No" if you can.</p>
+
+    <div class="actions">
+      <div class="btnWrap">
+        <button id="yesBtn">Yes 💖</button>
+        <button id="noBtn">No 🙃</button>
+      </div>
+    </div>
+
+
+    <div class="chip">
+      No dodges: <span id="dodgeCount">0</span> / 10
+    </div>
+  </main>
+
+  
+
+  <!-- Bouquet overlay -->
+  <div class="overlay" id="overlay" role="dialog" aria-modal="true" aria-hidden="true">
+    <section class="overlayCard">
+      <img
+        id="bouquetImg"
+        class="bouquetImg"
+        src="bouquet.png"
+        alt="A bouquet of roses"
+      />
+      <h2 class="overlayTitle">YAY!! 🥹💖</h2>
+      <p class="overlayText">
+        Here’s a bouquet for the prettiest Valentine ever.<br />
+        (Now you owe me a hug.)
+      </p>
+      <button class="closeBtn" id="closeOverlay">Aww 💗</button>
+    </section>
+  </div>
+
+
+  <script src="script.js"></script>
+</body>
+</html>

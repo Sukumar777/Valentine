@@ -1,0 +1,200 @@
+:root{
+  --bg1:#0b0b12;
+  --bg2:#1a0f2b;
+  --card: rgba(255,255,255,.08);
+  --border: rgba(255,255,255,.14);
+  --text:#ffffff;
+  --muted: rgba(255,255,255,.75);
+  --pink:#ff4d6d;
+  --pink2:#ff8fab;
+}
+
+*{ box-sizing:border-box; }
+html,body{ height:100%; }
+
+body{
+  margin:0;
+  font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+  background:
+    radial-gradient(900px 700px at 20% 20%, rgba(255,77,109,.20), transparent 60%),
+    radial-gradient(800px 650px at 80% 30%, rgba(255,143,171,.16), transparent 55%),
+    radial-gradient(900px 700px at 40% 90%, rgba(180,120,255,.15), transparent 60%),
+    linear-gradient(180deg, var(--bg2), var(--bg1));
+  color:var(--text);
+  overflow:hidden;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:18px;
+}
+
+/* Center "window" card */
+.window{
+  width:min(520px, 92vw);
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  padding: 22px 20px 18px;
+  box-shadow: 0 25px 70px rgba(0,0,0,.45);
+  backdrop-filter: blur(10px);
+  text-align:center;
+}
+
+.title{
+  font-size: clamp(22px, 3.6vw, 34px);
+  margin: 4px 0 6px;
+  font-weight: 800;
+  letter-spacing: .2px;
+}
+
+.subtitle{
+  margin: 0 0 16px;
+  color: var(--muted);
+  line-height:1.5;
+}
+
+.actions{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 18px;
+  margin-top: 10px;
+}
+
+.btnWrap{
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 18px;
+}
+
+
+button{
+  border:0;
+  cursor:pointer;
+  border-radius: 14px;
+  padding: 12px 16px;
+  font-weight: 800;
+  letter-spacing: .2px;
+  transition: transform .12s ease, width .2s ease, height .2s ease, font-size .2s ease;
+  user-select:none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* YES starts smaller */
+#yesBtn{
+  background: linear-gradient(135deg, var(--pink), var(--pink2));
+  color: white;
+  box-shadow: 0 10px 30px rgba(255,77,109,.25);
+
+  font-size: 10px;
+  padding: 6px 8px;
+  border-radius: 10px;
+
+  transform-origin: center;
+}
+
+
+/* NO button — visible next to YES on load */
+#noBtn{
+  position: relative;          /* IMPORTANT: stays in the flex row initially */
+  left: auto;
+  top: auto;
+  transform: none;
+
+  background: rgba(255,255,255,.12);
+  border: 1px solid rgba(255,255,255,.20);
+  color: white;
+
+  font-size: 16px;
+  padding: 14px 18px;
+  border-radius: 14px;
+
+  box-shadow: 0 18px 45px rgba(0,0,0,.25);
+}
+
+
+/* Press feedback ONLY — keep Y centering */
+#noBtn:active{
+  transform: scale(0.96);
+}
+
+
+.chip{
+  margin: 10px auto 0;
+  width: fit-content;
+  font-size: 12px;
+  color: rgba(255,255,255,.85);
+  background: rgba(0,0,0,.22);
+  border: 1px solid rgba(255,255,255,.12);
+  padding: 6px 10px;
+  border-radius: 999px;
+}
+
+/* Bouquet overlay */
+.overlay{
+  position: fixed;
+  inset: 0;
+  display:none;
+  align-items:center;
+  justify-content:center;
+  background: rgba(0,0,0,.55);
+  backdrop-filter: blur(6px);
+  z-index: 1000;
+  padding: 18px;
+}
+
+.overlayCard{
+  width:min(520px, 92vw);
+  background: rgba(255,255,255,.10);
+  border: 1px solid rgba(255,255,255,.16);
+  border-radius: 18px;
+  padding: 22px;
+  text-align:center;
+  box-shadow: 0 30px 90px rgba(0,0,0,.55);
+}
+
+.bouquet{
+  font-size: clamp(56px, 10vw, 92px);
+  margin: 8px 0 8px;
+  line-height: 1;
+}
+
+.overlayTitle{
+  margin: 0 0 6px;
+  font-size: clamp(20px, 4vw, 30px);
+}
+
+.overlayText{
+  margin: 0 0 14px;
+  color: rgba(255,255,255,.80);
+  line-height: 1.55;
+}
+
+.closeBtn{
+  background: rgba(255,255,255,.14);
+  border: 1px solid rgba(255,255,255,.20);
+  color: white;
+  padding: 10px 14px;
+  border-radius: 12px;
+  font-weight: 800;
+}
+
+.bouquetImg{
+  width: min(340px, 75vw);
+  height: auto;
+  border-radius: 16px;
+  border: 1px solid rgba(255,255,255,.18);
+  box-shadow: 0 22px 70px rgba(0,0,0,.45);
+
+  /* fade-in setup */
+  opacity: 0;
+  transform: translateY(10px) scale(0.98);
+  transition: opacity 700ms ease, transform 700ms ease;
+}
+
+/* when overlay is shown, animate image in */
+.overlay.show .bouquetImg{
+  opacity: 1;
+  transform: translateY(0) scale(1);
+}
