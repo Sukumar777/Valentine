@@ -70,8 +70,11 @@ function registerDodge(e) {
   document.querySelector(".subtitle").style.marginBottom = `${12 + extraSpace}px`;
   document.querySelector(".actions").style.marginBottom = `${12 + extraSpace}px`;
 
-  // Allow bouquet after 10 dodges
-  if (dodges >= 15) canShowBouquet = true;
+  // Allow bouquet after 15 dodges
+  if (dodges >= 15) {
+    canShowBouquet = true;
+    yesBtn.classList.add("glow"); // ✨ activate glow
+  }
 
   moveNoButtonAnywhere();
 }
@@ -92,6 +95,7 @@ function resetValentine() {
   yesScale = 0.4;
   yesBtn.style.transform = `scale(${yesScale})`;
   yesBtn.textContent = "Yes 💖";
+  yesBtn.classList.remove("glow")
 
   // restore margins you changed dynamically (match your original CSS intent)
   document.querySelector(".subtitle").style.marginBottom = "";
