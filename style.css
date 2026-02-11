@@ -97,7 +97,7 @@ button{
 
 /* NO button — visible next to YES on load */
 #noBtn{
-  position: relative;          /* IMPORTANT: stays in the flex row initially */
+  position: relative;          /* stays in the flex row initially */
   left: auto;
   top: auto;
   transform: none;
