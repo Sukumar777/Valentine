@@ -10,18 +10,14 @@ let dodges = 0;
 let canShowBouquet = false;
 
 // YES starts tiny and grows with dodges
-let yesScale = 0.6;
+let yesScale = 0.4;
 yesBtn.style.transform = `scale(${yesScale})`;
 
 function clamp(v, min, max) {
   return Math.max(min, Math.min(max, v));
 }
 
-/**
- * Cross-browser fix:
- * On first dodge, move NO into <body> so fixed positioning behaves correctly
- * even with backdrop-filter on the card.
- */
+/* No button positions */
 let noBtnMovedToBody = false;
 
 function moveNoButtonAnywhere() {
@@ -66,7 +62,7 @@ function registerDodge(e) {
 
   // Grow YES with every dodge
   yesScale += 0.08;
-  yesScale = clamp(yesScale, 0.6, 2.4);
+  yesScale = clamp(yesScale, 0.4, 2.4);
   yesBtn.style.transform = `scale(${yesScale})`;
 
   // Push content away as YES grows (top + bottom)
@@ -75,13 +71,13 @@ function registerDodge(e) {
   document.querySelector(".actions").style.marginBottom = `${12 + extraSpace}px`;
 
   // Allow bouquet after 10 dodges
-  if (dodges >= 10) canShowBouquet = true;
+  if (dodges >= 15) canShowBouquet = true;
 
   moveNoButtonAnywhere();
 }
 
 /**
- * ✅ Reset everything back to original "page load" state
+ * Reset everything 
  */
 function resetValentine() {
   // state
@@ -93,7 +89,7 @@ function resetValentine() {
   dodgeCountEl.textContent = "0";
 
   // YES back to tiny
-  yesScale = 0.6;
+  yesScale = 0.4;
   yesBtn.style.transform = `scale(${yesScale})`;
   yesBtn.textContent = "Yes 💖";
 
@@ -132,7 +128,7 @@ noBtn.addEventListener("click", (e) => {
   registerDodge(e);
 });
 
-/* YES button: show bouquet only after 10 dodges */
+/* YES button: show bouquet only after 15 dodges */
 yesBtn.addEventListener("click", () => {
   if (!canShowBouquet) {
     const original = "Yes 💖";
