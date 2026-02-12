@@ -1,6 +1,4 @@
-// ===============================
-// ELEMENTS
-// ===============================
+// script.js
 
 const noBtn = document.getElementById("noBtn");
 const yesBtn = document.getElementById("yesBtn");
@@ -14,65 +12,21 @@ const logo = document.querySelector(".floatingLogo");
 const windowCard = document.getElementById("window");
 const startHint = document.getElementById("startHint");
 
-// ===============================
-// STATE
-// ===============================
-
 let dodges = 0;
 let canShowBouquet = false;
 let bgStarted = false;
 
+// YES starts tiny
 let yesScale = 0.4;
 yesBtn.style.transform = `scale(${yesScale})`;
-
-// ===============================
-// HELPERS
-// ===============================
 
 function clamp(v, min, max) {
   return Math.max(min, Math.min(max, v));
 }
 
-// ===============================
-// LOGO START (ANDROID SAFE)
-// ===============================
-
-function startExperience() {
-  if (bgStarted) return;
-
-  backgroundMusic.currentTime = 0;
-  backgroundMusic.volume = 0.6;
-
-  // IMPORTANT: play directly inside user gesture
-  backgroundMusic.play().then(() => {
-    bgStarted = true;
-
-    if (startHint) startHint.classList.add("hide");
-
-    const rect = logo.getBoundingClientRect();
-    burstPetals(
-      rect.left + rect.width / 2,
-      rect.top + rect.height / 2,
-      20
-    );
-
-    fadeIn(backgroundMusic, 0.6, 1000);
-
-    setTimeout(() => {
-      if (windowCard) windowCard.classList.add("show");
-    }, 600);
-  }).catch(err => {
-    console.log("Audio blocked:", err);
-  });
-}
-
-// Use BOTH for Android reliability
-logo.addEventListener("click", startExperience);
-logo.addEventListener("touchend", startExperience);
-
-// ===============================
-// PETALS
-// ===============================
+/* ===============================
+   🌹 Petals (ONLY on logo start)
+================================= */
 
 function burstPetals(x, y, count = 18) {
   for (let i = 0; i < count; i++) {
@@ -102,12 +56,11 @@ function burstPetals(x, y, count = 18) {
   }
 }
 
-// ===============================
-// NO BUTTON DODGE
-// ===============================
+/* ===============================
+   No Button Dodge Logic
+================================= */
 
 let noBtnMovedToBody = false;
-let lastDodgeAt = 0;
 
 function moveNoButtonAnywhere() {
   if (!noBtnMovedToBody) {
@@ -117,19 +70,22 @@ function moveNoButtonAnywhere() {
 
   noBtn.style.position = "fixed";
   noBtn.style.zIndex = "9999";
+  noBtn.style.transform = "none";
 
-  const rect = noBtn.getBoundingClientRect();
   const margin = 12;
+  const rect = noBtn.getBoundingClientRect();
 
-  const maxX = window.innerWidth - rect.width - margin;
-  const maxY = window.innerHeight - rect.height - margin;
+  const maxX = Math.max(margin, window.innerWidth - rect.width - margin);
+  const maxY = Math.max(margin, window.innerHeight - rect.height - margin);
 
-  const x = Math.random() * maxX + margin;
-  const y = Math.random() * maxY + margin;
+  const x = Math.floor(Math.random() * maxX) + margin;
+  const y = Math.floor(Math.random() * maxY) + margin;
 
   noBtn.style.left = `${x}px`;
   noBtn.style.top = `${y}px`;
 }
+
+let lastDodgeAt = 0;
 
 function registerDodge(e) {
   if (e) e.preventDefault();
@@ -139,11 +95,15 @@ function registerDodge(e) {
   lastDodgeAt = now;
 
   dodges++;
-  dodgeCountEl.textContent = dodges;
+  dodgeCountEl.textContent = String(dodges);
 
   yesScale += 0.08;
   yesScale = clamp(yesScale, 0.4, 2.4);
   yesBtn.style.transform = `scale(${yesScale})`;
+
+  const extraSpace = Math.max(0, (yesScale - 1) * 20);
+  document.querySelector(".subtitle").style.marginBottom = `${12 + extraSpace}px`;
+  document.querySelector(".actions").style.marginBottom = `${12 + extraSpace}px`;
 
   if (dodges >= 25) {
     canShowBouquet = true;
@@ -153,87 +113,180 @@ function registerDodge(e) {
   moveNoButtonAnywhere();
 }
 
+function resetValentine() {
+  dodges = 0;
+  canShowBouquet = false;
+  lastDodgeAt = 0;
+
+  dodgeCountEl.textContent = "0";
+
+  yesScale = 0.4;
+  yesBtn.style.transform = `scale(${yesScale})`;
+  yesBtn.textContent = "Yes 💖";
+  yesBtn.classList.remove("glow");
+
+  document.querySelector(".subtitle").style.marginBottom = "";
+  document.querySelector(".actions").style.marginBottom = "";
+
+  noBtn.style.display = "";
+  noBtn.style.position = "relative";
+  noBtn.style.left = "auto";
+  noBtn.style.top = "auto";
+  noBtn.style.transform = "none";
+  noBtn.style.zIndex = "";
+
+  const actions = document.querySelector(".actions");
+  if (actions && !actions.contains(noBtn)) {
+    actions.appendChild(noBtn);
+  }
+
+  noBtnMovedToBody = false;
+}
+
+/* NO interactions */
 noBtn.addEventListener("mouseenter", registerDodge);
 noBtn.addEventListener("touchstart", registerDodge, { passive: false });
-noBtn.addEventListener("click", registerDodge);
+noBtn.addEventListener("click", (e) => {
+  e.preventDefault();
+  e.stopPropagation();
+  registerDodge(e);
+});
 
-// ===============================
-// YES BUTTON
-// ===============================
-
+/* YES logic (NO PETALS HERE) */
 yesBtn.addEventListener("click", () => {
   if (!bgStarted) return;
 
   if (!canShowBouquet) {
+    const original = "Yes 💖";
     yesBtn.textContent = "Try ‘No’ first 😇";
-    setTimeout(() => yesBtn.textContent = "Yes 💖", 900);
+    setTimeout(() => (yesBtn.textContent = original), 900);
     return;
   }
 
   noBtn.style.display = "none";
 
   overlay.style.display = "flex";
+  overlay.setAttribute("aria-hidden", "false");
+
+  overlay.classList.remove("show");
+  void overlay.offsetWidth;
   overlay.classList.add("show");
 
-  fadeOut(backgroundMusic, 800, true);
+  fadeOut(backgroundMusic, 900, true, true);
 
+  bouquetMusic.pause();
   bouquetMusic.currentTime = 0;
-  bouquetMusic.volume = 0.8;
-  bouquetMusic.play();
+  bouquetMusic.volume = 0;
+  bouquetMusic.play().catch(() => {});
+  fadeIn(bouquetMusic, 0.8, 1100);
 });
 
-// ===============================
-// RESET
-// ===============================
-
+/* Close overlay → Fresh start */
 closeOverlay.addEventListener("click", () => {
   overlay.classList.remove("show");
   overlay.style.display = "none";
+  overlay.setAttribute("aria-hidden", "true");
 
-  bouquetMusic.pause();
-  backgroundMusic.pause();
+  fadeOut(bouquetMusic, 500, true, true);
+  fadeOut(backgroundMusic, 500, true, true);
 
   if (windowCard) windowCard.classList.remove("show");
   if (startHint) startHint.classList.remove("hide");
 
   bgStarted = false;
-  dodges = 0;
-  canShowBouquet = false;
-  dodgeCountEl.textContent = "0";
 
-  yesScale = 0.4;
-  yesBtn.style.transform = `scale(${yesScale})`;
-  yesBtn.classList.remove("glow");
-
-  noBtn.style.display = "";
-  noBtn.style.position = "relative";
-  noBtnMovedToBody = false;
+  resetValentine();
 });
 
-// ===============================
-// FADE HELPERS
-// ===============================
+/* ===============================
+   Logo Click → Start Experience
+================================= */
 
-function fadeIn(audio, target, duration) {
-  audio.volume = 0;
-  const step = target / (duration / 30);
-  const fade = setInterval(() => {
-    if (audio.volume < target) {
-      audio.volume = Math.min(audio.volume + step, target);
-    } else {
-      clearInterval(fade);
-    }
-  }, 30);
+function startExperience() {
+  if (bgStarted) return;
+
+  backgroundMusic.volume = 0;
+  backgroundMusic.currentTime = 0;
+
+  const p = backgroundMusic.play();
+
+  const onStarted = () => {
+    bgStarted = true;
+
+    if (startHint) startHint.classList.add("hide");
+
+    const rect = logo.getBoundingClientRect();
+    burstPetals(
+      rect.left + rect.width / 2,
+      rect.top + rect.height / 2,
+      20
+    );
+
+    fadeIn(backgroundMusic, 0.6, 1200);
+
+    setTimeout(() => {
+      if (windowCard) windowCard.classList.add("show");
+    }, 1000);
+  };
+
+  if (p && typeof p.then === "function") {
+    p.then(onStarted).catch(() => onStarted());
+  } else {
+    onStarted();
+  }
 }
 
-function fadeOut(audio, duration, pauseAfter = false) {
-  const step = audio.volume / (duration / 30);
-  const fade = setInterval(() => {
-    if (audio.volume > 0) {
-      audio.volume = Math.max(audio.volume - step, 0);
-    } else {
-      clearInterval(fade);
-      if (pauseAfter) audio.pause();
+logo.addEventListener("pointerdown", startExperience);
+
+/* ===============================
+   Music helpers
+================================= */
+
+const _fadeTimers = new Map();
+
+function _clearFade(audio) {
+  const t = _fadeTimers.get(audio);
+  if (t) clearInterval(t);
+  _fadeTimers.delete(audio);
+}
+
+function fadeTo(audio, targetVolume, duration = 800) {
+  if (!audio) return;
+  _clearFade(audio);
+
+  const startVolume = audio.volume;
+  const delta = targetVolume - startVolume;
+
+  const stepMs = 25;
+  const steps = Math.max(1, Math.floor(duration / stepMs));
+  let i = 0;
+
+  const timer = setInterval(() => {
+    i++;
+    audio.volume = startVolume + delta * (i / steps);
+    if (i >= steps) {
+      audio.volume = targetVolume;
+      _clearFade(audio);
     }
-  }, 30);
+  }, stepMs);
+
+  _fadeTimers.set(audio, timer);
+}
+
+function fadeIn(audio, targetVolume, duration = 1200) {
+  if (!audio) return;
+  fadeTo(audio, targetVolume, duration);
+}
+
+function fadeOut(audio, duration = 900, shouldPause = true, resetTime = false) {
+  if (!audio) return;
+
+  fadeTo(audio, 0, duration);
+
+  setTimeout(() => {
+    if (shouldPause) {
+      audio.pause();
+      if (resetTime) audio.currentTime = 0;
+    }
+  }, duration + 30);
 }
