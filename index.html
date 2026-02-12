@@ -9,9 +9,20 @@
 
 <body>
 
-  <img src="logo.png" alt="Brand Logo" class="floatingLogo" />
+  <!-- Floating Logo (Start Button) -->
+  <img 
+    src="logo.png" 
+    alt="Start Valentine Experience"
+    class="floatingLogo"
+    role="button"
+    tabindex="0"
+    aria-label="Tap to start music and begin"
+  />
 
-  <!-- Center window -->
+  <!-- Tap hint -->
+  <div id="startHint">Tap the logo to begin 💖</div>
+
+  <!-- Center window (hidden initially via CSS) -->
   <main class="window" id="window">
     <h1 class="title">Will you be my Valentine? 💘</h1>
     <p class="subtitle">Choose wisely… Try to hit "No" if you can.</p>
@@ -23,14 +34,19 @@
       </div>
     </div>
 
-
     <div class="chip">
-      No. of dodges: <span id="dodgeCount">0</span> / 15
+      No. of dodges: <span id="dodgeCount">0</span> / 25
     </div>
   </main>
 
   <!-- Bouquet overlay -->
-  <div class="overlay" id="overlay" role="dialog" aria-modal="true" aria-hidden="true">
+  <div 
+    class="overlay" 
+    id="overlay" 
+    role="dialog" 
+    aria-modal="true" 
+    aria-hidden="true"
+  >
     <section class="overlayCard">
       <img
         id="bouquetImg"
@@ -43,10 +59,29 @@
         Here’s a bouquet for the prettiest Valentine ever.<br />
         (Now you owe me a hug)
       </p>
-      <button class="closeBtn" id="closeOverlay">Wanna try again 😉</button>
+      <button class="closeBtn" id="closeOverlay">
+        Wanna try again 😉
+      </button>
     </section>
   </div>
 
+  <!-- Background music (starts after logo click) -->
+  <audio 
+    id="backgroundMusic" 
+    src="romantic.mp3" 
+    loop 
+    playsinline 
+    preload="auto">
+  </audio>
+
+  <!-- Bouquet music -->
+  <audio 
+    id="bouquetMusic" 
+    src="music.mp3" 
+    loop 
+    playsinline 
+    preload="auto">
+  </audio>
 
   <script src="script.js"></script>
 </body>
