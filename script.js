@@ -152,6 +152,47 @@ noBtn.addEventListener("click", (e) => {
   registerDodge(e);
 });
 
+/* ===============================
+   ✅ Android-friendly audio unlock
+================================= */
+
+let audioUnlocked = false;
+
+async function unlockAudio() {
+  if (audioUnlocked) return true;
+
+  // Ensure elements exist
+  if (!backgroundMusic) return false;
+
+  // Hint the browser to load
+  try {
+    backgroundMusic.load();
+    bouquetMusic && bouquetMusic.load();
+  } catch (_) {}
+
+  try {
+    // Start muted to satisfy stricter policies; then stop.
+    backgroundMusic.muted = true;
+    backgroundMusic.volume = 0;
+
+    await backgroundMusic.play();
+
+    backgroundMusic.pause();
+    backgroundMusic.currentTime = 0;
+
+    backgroundMusic.muted = false;
+    audioUnlocked = true;
+    return true;
+  } catch (e) {
+    // Still blocked; user may need another tap, or in-app browser is restricting it.
+    audioUnlocked = false;
+    try {
+      backgroundMusic.muted = false;
+    } catch (_) {}
+    return false;
+  }
+}
+
 /* YES logic (NO PETALS HERE) */
 yesBtn.addEventListener("click", () => {
   if (!bgStarted) return;
@@ -177,6 +218,7 @@ yesBtn.addEventListener("click", () => {
   bouquetMusic.pause();
   bouquetMusic.currentTime = 0;
   bouquetMusic.volume = 0;
+
   bouquetMusic.play().catch(() => {});
   fadeIn(bouquetMusic, 0.8, 1100);
 });
@@ -199,19 +241,24 @@ closeOverlay.addEventListener("click", () => {
 });
 
 /* ===============================
-   Logo Click → Start Experience
+   Logo Tap → Start Experience
+   (click + touchend = best on Android)
 ================================= */
 
-function startExperience() {
+async function startExperience(e) {
+  if (e) e.preventDefault();
   if (bgStarted) return;
 
-  // mark started immediately to unlock UI
+  // Unlock audio first (Android/in-app browsers)
+  await unlockAudio();
+
+  // Mark started immediately so UI is not blocked
   bgStarted = true;
 
   backgroundMusic.volume = 0;
   backgroundMusic.currentTime = 0;
 
-  // try playing; ignore failure (user can tap again)
+  // Try to play for real now
   backgroundMusic.play().catch(() => {});
 
   if (startHint) startHint.classList.add("hide");
@@ -226,7 +273,21 @@ function startExperience() {
   }, 1000);
 }
 
-logo.addEventListener("pointerdown", startExperience);
+// Prefer click/touchend for mobile audio permission
+logo.addEventListener("click", startExperience);
+logo.addEventListener(
+  "touchend",
+  (e) => {
+    e.preventDefault();
+    startExperience(e);
+  },
+  { passive: false }
+);
+
+// Also allow keyboard (accessibility)
+logo.addEventListener("keydown", (e) => {
+  if (e.key === "Enter" || e.key === " ") startExperience(e);
+});
 
 /* ===============================
    Music helpers
