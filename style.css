@@ -28,7 +28,10 @@ body{
   padding:18px;
 }
 
-/* Center "window" card */
+/* ===============================
+   Center Window
+================================= */
+
 .window{
   width:min(520px, 92vw);
   background: var(--card);
@@ -38,13 +41,25 @@ body{
   box-shadow: 0 25px 70px rgba(0,0,0,.45);
   backdrop-filter: blur(10px);
   text-align:center;
+  transition: opacity 700ms ease, transform 700ms ease;
+}
+
+#window{
+  opacity: 0;
+  transform: translateY(20px);
+  pointer-events: none;
+}
+
+#window.show{
+  opacity: 1;
+  transform: translateY(0);
+  pointer-events: auto;
 }
 
 .title{
   font-size: clamp(22px, 3.6vw, 34px);
   margin: 4px 0 6px;
   font-weight: 800;
-  letter-spacing: .2px;
 }
 
 .subtitle{
@@ -54,125 +69,57 @@ body{
 }
 
 .actions{
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 18px;
-  margin-top: 10px;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  gap:18px;
 }
-
-.btnWrap{
-  position: relative;
-  display: flex;
-  align-items: center;
-  gap: 18px;
-}
-
 
 button{
   border:0;
   cursor:pointer;
-  border-radius: 14px;
-  padding: 12px 16px;
-  font-weight: 800;
-  letter-spacing: .2px;
-  transition: transform .12s ease, width .2s ease, height .2s ease, font-size .2s ease;
-  user-select:none;
-  -webkit-tap-highlight-color: transparent;
+  border-radius:14px;
+  font-weight:800;
+  transition:transform .15s ease;
+  -webkit-tap-highlight-color:transparent;
 }
 
-/* YES starts smaller */
 #yesBtn{
-  background: linear-gradient(135deg, var(--pink), var(--pink2));
-  color: white;
-  box-shadow: 0 10px 30px rgba(255,77,109,.25);
-
-  font-size: 10px;
-  padding: 6px 8px;
-  border-radius: 10px;
-
-  transform-origin: center;
+  background:linear-gradient(135deg,var(--pink),var(--pink2));
+  color:white;
+  padding:6px 8px;
+  font-size:10px;
+  border-radius:10px;
+  transform-origin:center;
 }
 
-
-/* NO button — visible next to YES on load */
 #noBtn{
-  position: relative;          /* stays in the flex row initially */
-  left: auto;
-  top: auto;
-  transform: none;
-
-  background: rgba(255,255,255,.25);
-  border: 1px solid rgba(255,255,255,.20);
-  color: white;
-
-  font-size: 16px;
-  padding: 14px 18px;
-  border-radius: 14px;
-
+  background:rgba(255,255,255,.25);
+  border:1px solid rgba(255,255,255,.20);
+  color:white;
+  padding:14px 18px;
+  font-size:16px;
+  border-radius:14px;
   box-shadow:
     0 18px 45px rgba(0,0,0,.25),
-    0 0 15px rgba(255, 157, 77, 0.9),
-    0 0 30px rgba(255, 157, 77, 0.6),
-    0 0 60px rgba(255, 157, 77, 0.4);
+    0 0 15px rgba(255,157,77,.9),
+    0 0 30px rgba(255,157,77,.6);
 }
 
-
-/* Press feedback ONLY — keep Y centering */
-#noBtn:active{
-  transform: scale(0.96);
+#yesBtn.glow{
+  box-shadow:
+    0 0 15px rgba(255,77,109,.9),
+    0 0 30px rgba(255,77,109,.6),
+    0 0 60px rgba(255,77,109,.4);
 }
-
 
 .chip{
-  margin: 10px auto 0;
-  width: fit-content;
+  display: inline-block;   /* prevents full width stretch */
+  margin-top: 6px;
   font-size: 12px;
-  color: rgba(255,255,255,.85);
-  background: rgba(0,0,0,.22);
-  border: 1px solid rgba(255,255,255,.12);
-  padding: 6px 10px;
+  background: rgba(0,0,0,.25);
+  padding: 6px 14px;
   border-radius: 999px;
-}
-
-/* Bouquet overlay */
-.overlay{
-  position: fixed;
-  inset: 0;
-  display:none;
-  align-items:center;
-  justify-content:center;
-  background: rgba(0,0,0,.55);
-  backdrop-filter: blur(6px);
-  z-index: 1000;
-  padding: 18px;
-}
-
-.overlayCard{
-  width:min(520px, 92vw);
-  background: rgba(255,255,255,.10);
-  border: 1px solid rgba(255,255,255,.16);
-  border-radius: 18px;
-  padding: 22px;
-  text-align:center;
-  box-shadow: 0 30px 90px rgba(0,0,0,.55);
-}
-
-.bouquet{
-  font-size: clamp(56px, 10vw, 92px);
-  margin: 8px 0 8px;
-  line-height: 1;
-}
-
-.overlayTitle{
-  margin: 0 0 6px;
-  font-size: clamp(20px, 4vw, 30px);
-}
-
-.overlayText{
-  margin: 0 0 14px;
-  color: rgba(255,255,255,.80);
-  line-height: 1.55;
 }
 
 .closeBtn{
@@ -189,71 +136,120 @@ button{
     0 0 60px rgba(255, 77, 109, 0.4);
 }
 
+/* ===============================
+   Overlay
+================================= */
+
+.overlay{
+  position:fixed;
+  inset:0;
+  display:none;
+  align-items:center;
+  justify-content:center;
+  background:rgba(0,0,0,.6);
+  backdrop-filter:blur(6px);
+  z-index:1000;
+}
+
+.overlayCard{
+  width:min(520px,92vw);
+  background:rgba(255,255,255,.10);
+  border:1px solid rgba(255,255,255,.16);
+  border-radius:18px;
+  padding:22px;
+  text-align:center;
+}
+
 .bouquetImg{
-  width: min(340px, 75vw);
-  height: auto;
-  border-radius: 16px;
-  border: 1px solid rgba(255,255,255,.18);
-  box-shadow: 0 22px 70px rgba(0,0,0,.45);
-
-  /* fade-in setup */
-  opacity: 0;
-  transform: translateY(10px) scale(0.98);
-  transition: opacity 700ms ease, transform 700ms ease;
+  width:min(340px,75vw);
+  border-radius:16px;
+  opacity:0;
+  transform:translateY(10px) scale(.98);
+  transition:opacity .7s ease, transform .7s ease;
 }
 
-/* when overlay is shown, animate image in */
 .overlay.show .bouquetImg{
-  opacity: 1;
-  transform: translateY(0) scale(1);
-}
-
-/* YES glow when activated */
-#yesBtn.glow {
-  box-shadow:
-    0 0 15px rgba(255, 77, 109, 0.9),
-    0 0 30px rgba(255, 77, 109, 0.6),
-    0 0 60px rgba(255, 77, 109, 0.4);
+  opacity:1;
+  transform:translateY(0) scale(1);
 }
 
 /* ===============================
-   Responsive Floating Logo
+   Floating Logo (Slower Pulse)
 ================================= */
 
 .floatingLogo{
-  position: fixed;
-
-  /* Move closer to screen edges */
-  top: clamp(10px, 2vw, 20px);
-  left: clamp(8px, 2vw, 20px);
-
-  width: clamp(60px, 9vw, 90px);
-  height: auto;
-
-  z-index: 3000;
-  cursor: pointer;
-
-  will-change: transform, filter;
-
-  animation: logoFloat 5s ease-in-out infinite,
-             logoGlow 4s ease-in-out infinite;
+  position:fixed;
+  top:clamp(10px,2vw,20px);
+  left:clamp(8px,2vw,20px);
+  width:clamp(60px,9vw,90px);
+  cursor:pointer;
+  z-index:3000;
+  animation:
+    logoFloat 5s ease-in-out infinite,
+    logoPulse 3.5s ease-in-out infinite;
+  filter:
+    drop-shadow(0 0 15px rgba(255,77,109,.9))
+    drop-shadow(0 0 35px rgba(255,77,109,.75))
+    drop-shadow(0 0 65px rgba(255,77,109,.55));
 }
 
-/* Very subtle movement */
-@keyframes logoFloat {
-  0%   { transform: translateY(0px) scale(1); }
-  50%  { transform: translateY(-2px) scale(1.015); }
-  100% { transform: translateY(0px) scale(1); }
+@keyframes logoFloat{
+  0%,100%{ transform:translateY(0); }
+  50%{ transform:translateY(-4px); }
 }
 
-/* Softer glow */
-@keyframes logoGlow {
-  0%   { filter: drop-shadow(0 0 5px rgba(255,77,109,.35)); }
-  50%  { filter: drop-shadow(0 0 12px rgba(255,77,109,.6)); }
-  100% { filter: drop-shadow(0 0 5px rgba(255,77,109,.35)); }
+@keyframes logoPulse{
+  0%,100%{ transform:scale(1); }
+  50%{ transform:scale(1.1); }
 }
 
-/* Gentle hover */
-.floatingLogo:hover{
-  transform: scale(1.05);
+/* ===============================
+   Start Hint aligned with logo
+================================= */
+
+#startHint{
+  position:fixed;
+  top:calc(clamp(10px,2vw,20px) + (clamp(60px,9vw,90px)/2));
+  transform:translateY(-50%);
+  left:calc(clamp(8px,2vw,20px) + clamp(60px,9vw,90px) + 15px);
+  background:rgba(0,0,0,.35);
+  backdrop-filter:blur(8px);
+  padding:10px 16px;
+  border-radius:14px;
+  font-size:14px;
+  transition:opacity .4s ease;
+}
+
+#startHint.hide{
+  opacity:0;
+  pointer-events:none;
+}
+
+/* ===============================
+   WOW: Falling Rose Petals
+================================= */
+
+.petalParticle{
+  position:fixed;
+  width:14px;
+  height:18px;
+  pointer-events:none;
+  z-index:9999;
+  background:radial-gradient(circle at 30% 30%, rgba(255,255,255,.7), rgba(255,77,109,.95) 40%, rgba(255,77,109,.55) 75%);
+  border-radius:12px 12px 12px 0;
+  opacity:0;
+  animation:petalFall var(--dur) ease-in forwards;
+  filter:drop-shadow(0 6px 14px rgba(0,0,0,.25));
+}
+
+@keyframes petalFall{
+  0%{
+    opacity:0;
+    transform:translate(calc(-50% + var(--x0)), calc(-50% + var(--y0))) rotate(var(--r0));
+  }
+  10%{ opacity:1; }
+  100%{
+    opacity:0;
+    transform:translate(calc(-50% + var(--x1)), calc(-50% + var(--y1))) rotate(var(--r1));
+  }
 }
