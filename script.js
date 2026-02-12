@@ -98,7 +98,7 @@ function registerDodge(e) {
   dodgeCountEl.textContent = String(dodges);
 
   yesScale += 0.08;
-  yesScale = clamp(yesScale, 0.4, 2.4);
+  yesScale = clamp(yesScale, 0.4, 2);
   yesBtn.style.transform = `scale(${yesScale})`;
 
   const extraSpace = Math.max(0, (yesScale - 1) * 20);
