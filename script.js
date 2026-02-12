@@ -25,6 +25,41 @@ function clamp(v, min, max) {
 }
 
 /* ===============================
+   🔓 Mobile Audio Unlock (Fix)
+   - iOS/Android often require a trusted click/tap before any audio can play
+================================= */
+
+let audioUnlocked = false;
+
+function unlockAudio() {
+  if (audioUnlocked) return;
+
+  // Prime both audios with a user gesture, then pause immediately
+  const p1 = backgroundMusic.play();
+  if (p1 && typeof p1.then === "function") {
+    p1.then(() => {
+      backgroundMusic.pause();
+      backgroundMusic.currentTime = 0;
+      backgroundMusic.muted = false;
+      audioUnlocked = true;
+    }).catch(() => {});
+  }
+
+  const p2 = bouquetMusic.play();
+  if (p2 && typeof p2.then === "function") {
+    p2.then(() => {
+      bouquetMusic.pause();
+      bouquetMusic.currentTime = 0;
+      bouquetMusic.muted = false;
+    }).catch(() => {});
+  }
+}
+
+// Unlock on first interaction anywhere (most reliable on mobile)
+document.addEventListener("click", unlockAudio, { once: true });
+document.addEventListener("touchend", unlockAudio, { once: true, passive: true });
+
+/* ===============================
    🌹 Petals (ONLY on logo start)
 ================================= */
 
@@ -200,11 +235,16 @@ closeOverlay.addEventListener("click", () => {
 
 /* ===============================
    Logo Click → Start Experience
+   (Use click/touchend instead of pointerdown for mobile audio reliability)
 ================================= */
 
 function startExperience() {
   if (bgStarted) return;
 
+  // Make sure audio is unlocked if the user tapped the logo first
+  unlockAudio();
+
+  backgroundMusic.muted = false;
   backgroundMusic.volume = 0;
   backgroundMusic.currentTime = 0;
 
@@ -216,11 +256,7 @@ function startExperience() {
     if (startHint) startHint.classList.add("hide");
 
     const rect = logo.getBoundingClientRect();
-    burstPetals(
-      rect.left + rect.width / 2,
-      rect.top + rect.height / 2,
-      20
-    );
+    burstPetals(rect.left + rect.width / 2, rect.top + rect.height / 2, 20);
 
     fadeIn(backgroundMusic, 0.6, 1200);
 
@@ -236,7 +272,16 @@ function startExperience() {
   }
 }
 
-logo.addEventListener("pointerdown", startExperience);
+// Mobile-safe listeners
+logo.addEventListener("click", startExperience, { passive: true });
+logo.addEventListener(
+  "touchend",
+  (e) => {
+    e.preventDefault(); // avoid "ghost click" issues on iOS
+    startExperience();
+  },
+  { passive: false }
+);
 
 /* ===============================
    Music helpers
