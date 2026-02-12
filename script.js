@@ -205,35 +205,25 @@ closeOverlay.addEventListener("click", () => {
 function startExperience() {
   if (bgStarted) return;
 
+  // mark started immediately to unlock UI
+  bgStarted = true;
+
   backgroundMusic.volume = 0;
   backgroundMusic.currentTime = 0;
 
-  const p = backgroundMusic.play();
+  // try playing; ignore failure (user can tap again)
+  backgroundMusic.play().catch(() => {});
 
-  const onStarted = () => {
-    bgStarted = true;
+  if (startHint) startHint.classList.add("hide");
 
-    if (startHint) startHint.classList.add("hide");
+  const rect = logo.getBoundingClientRect();
+  burstPetals(rect.left + rect.width / 2, rect.top + rect.height / 2, 20);
 
-    const rect = logo.getBoundingClientRect();
-    burstPetals(
-      rect.left + rect.width / 2,
-      rect.top + rect.height / 2,
-      20
-    );
+  fadeIn(backgroundMusic, 0.6, 1200);
 
-    fadeIn(backgroundMusic, 0.6, 1200);
-
-    setTimeout(() => {
-      if (windowCard) windowCard.classList.add("show");
-    }, 1000);
-  };
-
-  if (p && typeof p.then === "function") {
-    p.then(onStarted).catch(() => onStarted());
-  } else {
-    onStarted();
-  }
+  setTimeout(() => {
+    if (windowCard) windowCard.classList.add("show");
+  }, 1000);
 }
 
 logo.addEventListener("pointerdown", startExperience);
