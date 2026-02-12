@@ -101,9 +101,11 @@ function registerDodge(e) {
   yesScale = clamp(yesScale, 0.4, 2);
   yesBtn.style.transform = `scale(${yesScale})`;
 
-  const extraSpace = Math.max(0, (yesScale - 1) * 20);
-  document.querySelector(".subtitle").style.marginBottom = `${12 + extraSpace}px`;
-  document.querySelector(".actions").style.marginBottom = `${12 + extraSpace}px`;
+  if (dodges < 20) {
+    const extraSpace = Math.max(0, (yesScale - 1) * 20);
+    document.querySelector(".subtitle").style.marginBottom = `${12 + extraSpace}px`;
+    document.querySelector(".actions").style.marginBottom = `${12 + extraSpace}px`;
+  }
 
   if (dodges >= 20) {
     canShowBouquet = true;
