@@ -105,9 +105,10 @@ function registerDodge(e) {
   document.querySelector(".subtitle").style.marginBottom = `${12 + extraSpace}px`;
   document.querySelector(".actions").style.marginBottom = `${12 + extraSpace}px`;
 
-  if (dodges >= 25) {
+  if (dodges >= 20) {
     canShowBouquet = true;
     yesBtn.classList.add("glow");
+    yesBtn.classList.add("pulse");
   }
 
   moveNoButtonAnywhere();
@@ -124,6 +125,7 @@ function resetValentine() {
   yesBtn.style.transform = `scale(${yesScale})`;
   yesBtn.textContent = "Yes 💖";
   yesBtn.classList.remove("glow");
+  yesBtn.classList.remove("pulse");
 
   document.querySelector(".subtitle").style.marginBottom = "";
   document.querySelector(".actions").style.marginBottom = "";
